@@ -9,7 +9,7 @@ int main()
         return 1;
     }
     
-    SDL_Window* window = SDL_CreateWindow("ex1", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 160, 160, SDL_WINDOW_OPENGL);
+    SDL_Window* window = SDL_CreateWindow("ex1", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 320, 320, SDL_WINDOW_OPENGL);
     if (window == NULL) {
         printf("Error Window Creation\n");
         SDL_Quit();
@@ -57,28 +57,32 @@ int main()
     }
 
 
+
     // Créer un rectangle de destination pour centrer l'image
     SDL_Rect destRect;
     destRect.w = 16; // Largeur de l'image
     destRect.h = 16; // Hauteur de l'image
-    destRect.x = 160 / 2; // Position X centrée
-    destRect.y = 160 / 2; // Position Y centrée
+    destRect.x = 320 / 2; // Position X centrée
+    destRect.y = 320 / 2; // Position Y centrée
 
     // Boucle d'événements
     int running = 1;
+    SDL_Event event;
     while (running) {
-        SDL_Event e;
-        while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
                 running = 0; // Sortir de la boucle si l'utilisateur ferme la fenêtre
+            } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+                // Mettre à jour la position de l'image selon le clic
+                destRect.x = event.button.x - destRect.w / 2; // Centrer l'image sur le clic
+                destRect.y = event.button.y - destRect.h / 2; // Centrer l'image sur le clic
             }
         }
-
+        SDL_SetRenderDrawColor(renderer, 156, 150, 150, 150);
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, texture, NULL, &destRect); // Rendu de la texture
         SDL_RenderPresent(renderer);
     }
-
     // Libération des ressources
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
